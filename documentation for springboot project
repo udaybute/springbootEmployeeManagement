@@ -1,0 +1,115 @@
+	• First open spring boot initializer and create maven project 
+	• Add dependencies for java web, jpa and MySQL connector and generate project 
+	•  open eclipse and go to file -> open project from file system -> directory -> select your unzip project file -> finish 
+	• Now your project will shown in eclipse IDE
+	• Open pom.xml file and if on 1st line if you get an error there then comes below and add highlited red color line inside properties tag 
+	
+	<properties>
+	<java.version>17</java.version>
+	<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+	</properties>
+	
+	• Then right click on your project and go to runas -> maven clean 
+	• Now Then right click on your project and go to maven -> update the project 
+	• Now all error will be gone and you are ready to star working on project.
+
+
+Project structure for spring boot 
+
+	•  inside project there is src/main/java folder
+	• In src/main/java  folder we have to create following packages 
+	1.bean 
+	2.controller 
+	3.repostory 
+	4.service
+	
+	1. Bean package - Inside bean package create class of employee add fields 
+	Id, name, address
+	
+	Declare this class with annotation @Entity  and also @Table(name="employee")
+	@table annotation will create table in mysql with column id, name and address.
+	Declare id as @Id annotation. 
+	
+	Add getters and setters methods 
+	Add both parametrize and non-parametrize contructor. 
+	
+	
+2.controller -  
+	• inside controller package create class with name EmployeeController
+	• Add @RestController annotation to declare this class as controller.
+	• Then create method 
+	public List<Employee> getAllEmployee(){…}
+	• But for that first we have create service class inside the service package. 
+	• Then come inside the repository package and create interface EmployeeRepostory you can see below 
+	
+	
+	package com.admin.SpringBootCrud.repository;
+	
+	import org.springframework.data.repository.CrudRepository;
+	
+	import com.admin.SpringBootCrud.bean.Employee;
+	
+	public interface EmployeeRepository extends CrudRepository<Employee, String> 
+	{
+	
+	}
+	
+	• CrudRepository is already pre defined class which have its own method that we are going to use to perform crud operation for our project that’s why we have extended this class and we have pass there two parameter employee and string
+	Employee because we have create it already as entity class and string for the type of Id that we have declare inside the Employee class.
+	
+	
+4.service
+	• Inside the service class write below code 
+	
+	public EmployeeRepository employeeRepo;
+		
+	  public List<Employee> getAllEmployee()
+	  {
+		  List<Employee> employees = new ArrayList<>();
+		  employeeRepo.findAll().forEach(employees::add);
+		  return employees;
+	  }
+	
+	• EmployeeRepository  is the reference of the EmployeeRepository  interface because we can not create object of the interface. So that we can call the all the methods of the CrudRepository class.
+	• Inside getEmployee method fist we create arraylist to store all the employee object.
+	• Then using reference variable of the EmployeeRepository  we called findAll() method so we can get all employees object list and to store this inside the arraylist name employee we use foreach loop and inside the foreach loop there we write employees::add this will add all the object getting from the findAll method. And in the last we return this list as we declare type of getAllEmployee as list. 
+   
+
+
+2.controller  
+	•  then again come to controller class and create reference of the EmployeeService class so that you can call the method that you have declared inside service class.
+	
+	@Autowired
+	    private EmployeeService employeeService;
+	
+	Autowired is the annotation used when we create any reference of the class.
+	
+	• getEmployee method Then write below code 
+	
+	public List<Employee> getAllEmployee()
+		{
+			return employeeService.getAllEmployee();
+		}
+	 
+
+	• Update method 
+	@PathVariable is for the annotation to capture the id form request URL
+	@RequestBody is for the annotation to capture the request body of the employee object.
+	
+	
+	With same we can create delete method.
+	
+	
+	
+	
+	2.application.properties declaration for MYsql
+	
+	
+	spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+	spring.datasource.url=jdbc:mysql://localhost:3306/userdb
+	spring.datasource.username=root
+	spring.datasource.password=root
+	spring.jpa.show-sql=true
+	spring.jpa.hibernate.ddl-auto=create
+	spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+server.port=9111
